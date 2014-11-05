@@ -17,8 +17,11 @@ if has("folding")
       if( shortname != "" )
          let foldtext .= ' "' . shortname . '"'
       else
-         let reference = matchstr( join( getline(v:foldstart + 1, v:foldstart + 5 ) ), '^\s<.\{-}-REF.\{-}>.*/\zs[-_A-Za-z0-9]\+\ze<')
-         let foldtext .=  ' "' . shortname . '"'
+         let reference = matchstr( join( getline(v:foldstart + 1, min([v:foldend, v:foldstart + 5]) ) ), '^\s*<.\{-}-REF .\{-}>.*\/\zs[-_A-Za-z0-9]\+\ze<', 0,1)
+
+         if( reference != "" )
+            let foldtext .=  ' REF:"' . reference . '"'
+         endif
       endif
       let foldtext .= '>'
 
