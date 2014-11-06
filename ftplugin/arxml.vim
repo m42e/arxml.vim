@@ -1,3 +1,4 @@
+
 if exists("b:did_ftplugin")
    finish
 endif
@@ -16,7 +17,6 @@ if has("folding")
       let foldtext = matchstr( getline( v:foldstart ), '\s*<[-A-Z]\+' )
       if (foldtext =~ "\s*<AR-PACKAGES")
          let pkgs = ''
-         let @u = join(getline( v:foldstart + 1, v:foldend ))
          for line in split(join(getline( v:foldstart + 1, v:foldend )),"\/AR-PACKAGE>\s*")
             let m = matchstr(line,  '<AR-PACKAGE.\{-}>\s*<SHORT-NAME>\zs[-_A-Za-z0-9]\+\ze<\/SHORT-NAME>')
             if(m != "")
