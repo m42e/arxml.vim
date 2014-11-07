@@ -20,14 +20,14 @@ if (! exists("g:skip_arxml_python"))
 let s:curfile = expand("<sfile>")
 let s:curfiledir = fnamemodify(s:curfile, ":h")
 
-"let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
+let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
 
 let s:xpath_search_history = []
 
 
 py import sys
-"execute "py sys.argv = ['" . s:pyfile . "']"
-"execute "pyfile " . s:pyfile
+execute "py sys.argv = ['" . s:pyfile . "']"
+execute "pyfile " . s:pyfile
 
 py <<EOF
 import vim
@@ -63,10 +63,9 @@ EOF
          endif
          silent normal! "syit
          let shortnamepath = @s
-         let xpath= substitute(shortnamepath, "\\/\\([^\\/]*\\)", "\\/\\/SHORT-NAME[text()=\"\\1\"]","g")
-         echo xpath
+         let xpath= substitute(shortnamepath, "\\/\\([^\\/]*\\)", "\\/\\/default:SHORT-NAME[text()=\"\\1\"]/..","g")
 
-    let l:ns_prefixes = getbufvar(a:active_buffer, "ns_prefixes")
+		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
          let xpath = escape(xpath, "'\\")
          execute "py vim_adaptor.evaluate_xpath(" .
                   \ l:active_buffer . ", " .
