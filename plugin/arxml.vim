@@ -54,6 +54,8 @@ EOF
          if !exists("b:ns_prefixes")
             call XPathGuessPrefixes()
          endif
+         let l:active_window = winnr()
+         let l:active_buffer = winbufnr(l:active_window)
 
          if ( "" == matchstr(getline("."), "-REF[ >]"))
             echo "no reference in line"
@@ -64,6 +66,12 @@ EOF
          let xpath= substitute(shortnamepath, "\\/\\([^\\/]*\\)", "\\/\\/SHORT-NAME[text()=\"\\1\"]","g")
          echo xpath
 
+    let l:ns_prefixes = getbufvar(a:active_buffer, "ns_prefixes")
+         let xpath = escape(xpath, "'\\")
+         execute "py vim_adaptor.evaluate_xpath(" .
+                  \ l:active_buffer . ", " .
+                  \ "'" . l:xpath . "', " .
+                  \ string(l:ns_prefixes) . ")"
       endf
 
       function! XPathGuessPrefixes()
