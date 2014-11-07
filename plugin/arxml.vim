@@ -50,7 +50,7 @@ EOF
 
       let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
 
-      function! FollowSymbolicName()
+      function! FollowShortName()
          if !exists("b:ns_prefixes")
             call XPathGuessPrefixes()
          endif

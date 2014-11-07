@@ -2,8 +2,10 @@ arxml.vim
 =========
 Provides a more usefull folding for AUTOSAR XML files (arxml).
 It shows the shortname of the collapsed element in the foldtext, and shows the subpackages of ar-packages elements.
+And it allows to jump to the the linked reference using: ```call FollowShortName()```
 
 TODO
 ========
-- It would be most usefull if somehow a linking of the shortnames to the specific elements can be performed using xpath.. maybe the xpath plugin is helpfull here
+- ~~It would be most usefull if somehow a linking of the shortnames to the specific elements can be performed using xpath.. maybe the xpath plugin is helpfull here~~
+- Add optional shortcut to jump to shortname location (this only works in the current file, and is not planned to be extended in near future)
 - more special handlings of some elements
