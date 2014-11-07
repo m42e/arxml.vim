@@ -22,25 +22,22 @@ def get_buffer_string(bufnr):
     buffer = vim.buffers[bufnr + offset]
     return "\n".join(buffer)
 
-def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
-    loc_list = VimLocListAdaptor(bufnr, winnr)
-    loc_list.clear_current_list()
-    loc_list.add_text_entry("Results for: " + xpath)
-    
-    xml = get_buffer_string(bufnr)
+def evaluate_xpath(bufnr, xpath, ns_prefixes={}):
+   xml = get_buffer_string(bufnr)
 
     try:
-        results = x.evaluate(xml, xpath, ns_prefixes)
-        if len(results) > 0:
-            for result in results:
-                loc_list.add_result_entry(result)
-        else:
-            loc_list.add_error_entry('No results returned')
+       results = x.evaluate(xml, xpath, ns_prefixes)
+       if len(results) > 1:
+          vim.eval("echo \\\"ShortName not unique\\\"")
+       elif len(results) < 1:
+          vim.eval("echo \\\"ShortName path not found\\\"")
+       else:
+          vim.eval("echo \\\"found\\\"")
     except Exception as e:
-        if isinstance(e, XPathError) and xpath in ["", "//"]:
-            loc_list.add_error_entry('No results returned')
-        else:
-            loc_list.add_error_entry(e.msg)
+       if isinstance(e, XPathError) and xpath in ["", "//"]:
+          vim.eval("echo \\\"ShortName path not found\\\"")
+       else:
+          vim.eval("echo \\\"XPath error: "+(e.msg)+"\\\"")
 
 def guess_prefixes(bufnr):
     try:
