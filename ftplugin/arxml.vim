@@ -17,7 +17,11 @@ if has("folding")
       let foldtext = matchstr( getline( v:foldstart ), '\s*<[-A-Z]\+' )
       if (foldtext =~ "\s*<AR-PACKAGES")
          let pkgs = ''
-         for line in split(join(getline( v:foldstart + 1, v:foldend )),"\/AR-PACKAGE>\s*")
+         let pkgs_append = ""
+         if (min([v:foldstart + 10000, v:foldend] ) < v:foldend )
+            let pkgs_append = ", ...?"
+         endif
+         for line in split(join(getline( v:foldstart + 1, min([v:foldstart + 10000, v:foldend] ))),"\(\/AR-PACKAGE>\s*\|$\)")
             let m = matchstr(line,  '<AR-PACKAGE.\{-}>\s*<SHORT-NAME>\zs[-_A-Za-z0-9]\+\ze<\/SHORT-NAME>')
             if(m != "")
                if(pkgs == '')
@@ -29,7 +33,7 @@ if has("folding")
             endif
          endfor
          if (pkgs != '')
-            let foldtext .= pkgs
+            let foldtext .= pkgs.pkgs_append
          endif
       else
          let shortname = matchstr( join( getline( v:foldstart + 1, v:foldstart + 5 ) ), '^\s*<SHORT-NAME>\zs[-_A-Za-z0-9]\+\ze<\/SHORT-NAME>' )
