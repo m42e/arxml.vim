@@ -4,6 +4,11 @@ Provides a more usefull folding for AUTOSAR XML files (arxml).
 It shows the shortname of the collapsed element in the foldtext, and shows the subpackages of ar-packages elements.
 And it allows to jump to the the linked reference using: ```call FollowShortName()```
 
+Dependencies
+========
+- vim must be compiled with python support
+- lxml must be instlled for python
+
 TODO
 ========
 - ~~It would be most usefull if somehow a linking of the shortnames to the specific elements can be performed using xpath.. maybe the xpath plugin is helpfull here~~
