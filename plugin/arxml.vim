@@ -51,21 +51,24 @@ EOF
       let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
 
       function! FollowShortName()
+         if ( "" == matchstr(getline("."), "-T\\?REF[ >]"))
+            echo "no reference in line following last yanked ShortName"
+         else
+            silent normal! "syit
+         endif
+         call FollowYankedShortName()
+      endf
+
+      function! FollowYankedShortName()
          if !exists("b:ns_prefixes")
             call XPathGuessPrefixes()
          endif
          let l:active_window = winnr()
          let l:active_buffer = winbufnr(l:active_window)
-
-         if ( "" == matchstr(getline("."), "-REF[ >]"))
-            echo "no reference in line"
-            return
-         endif
-         silent normal! "syit
          let shortnamepath = @s
          let xpath= substitute(shortnamepath, "\\/\\([^\\/]*\\)", "\\/\\/default:SHORT-NAME[text()=\"\\1\"]/..","g")
 
-		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
+	    	let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
          let xpath = escape(xpath, "'\\")
          execute "py vim_adaptor.evaluate_xpath(" .
                   \ l:active_buffer . ", " .
