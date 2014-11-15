@@ -12,6 +12,6 @@ Dependencies
 TODO
 ========
 - ~~It would be most usefull if somehow a linking of the shortnames to the specific elements can be performed using xpath.. maybe the xpath plugin is helpfull here~~
-- Add optional shortcut to jump to shortname location (this only works in the current file, and is not planned to be extended in near future)
+- ~~Add optional shortcut to jump to shortname location (this only works in the current file, and is not planned to be extended in near future)~~
 - more special handlings of some elements
 - documentation

@@ -4,8 +4,10 @@ try:
 except ImportError:
     vim = None
 
+import pprint
 from arxml_vim import xpath as x
 from arxml_vim import namespace_prefix_guesser as g
+from lxml import etree
 
 VARIABLE_SCOPE = "s:"
 
@@ -51,3 +53,46 @@ def guess_prefixes(bufnr):
         vim.command(outstr)
     except Exception as e:
         vim.command('throw "{0}"'.format(e.msg))
+
+def get_shortnamepath(bufnr, linenr, ns_prefixes={}):
+    xml = get_buffer_string(bufnr)
+    try:
+        tree = etree.fromstring(xml)
+    except Exception as e:
+        raise
+    shortnamepath = ""
+    for element in tree.iter():
+        if (element.sourceline == int(linenr)):
+            while(not element is None):
+                shortnameelement = element.xpath("default:SHORT-NAME", namespaces=ns_prefixes)
+                if(len(shortnameelement) > 0):
+                    shortname = '/'+shortnameelement[0].text
+                else:
+                    shortname = ''
+                shortnamepath = "{0}{1}".format(shortname, shortnamepath)
+                element = element.getparent()
+            break
+    command = 'let l:current_snpath = \"{0}\"'.format(shortnamepath)
+    print command
+    vim.command(command)
+
+def get_xpath(bufnr, linenr, ns_prefixes={}):
+    xml = get_buffer_string(bufnr)
+    try:
+        tree = etree.fromstring(xml)
+    except Exception as e:
+        raise
+    xpath = ""
+    for element in tree.iter():
+        if (element.sourceline == int(linenr)):
+            while(not element is None):
+                shortnameelement = element.xpath("default:SHORT-NAME", namespaces=ns_prefixes)
+                if(len(shortnameelement) > 0):
+                    shortname = "/SHORT-NAME[text()='{0}'/..".format(shortnameelement[0].text)
+                else:
+                    shortname = ''
+                xpath = "{0}{1}/{2}".format(element.tag, shortname, xpath)
+                element = element.getparent()
+            break
+    command = 'let l:current_path = \"{0}\"'.format(xpath)
+    vim.command(command)
