@@ -68,7 +68,7 @@ EOF
          let shortnamepath = @s
          let xpath= substitute(shortnamepath, "\\/\\([^\\/]*\\)", "\\/\\/default:SHORT-NAME[text()=\"\\1\"]/..","g")
 
-	    	let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
+       	 let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
          let xpath = escape(xpath, "'\\")
          execute "py vim_adaptor.evaluate_xpath(" .
                   \ l:active_buffer . ", " .
@@ -86,6 +86,40 @@ EOF
          catch
          endtry
       endf
+
+	  function! FindShortNameReferences()
+		  execute "g/".substitute(GetShortNamePathForLine(), "\\/", "\\\\/", "g")."</caddexpr expand(\"%\") . \":\" . line(\".\") .  \":\" . getline(\".\")"
+		  execute "cw"
+	  endf
+
+	  function! GetShortNamePathForLine()
+         if !exists("b:ns_prefixes")
+            call XPathGuessPrefixes()
+         endif
+         let l:active_window = winnr()
+         let l:active_buffer = winbufnr(l:active_window)
+
+       	 let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
+         execute "py vim_adaptor.get_shortnamepath(" .
+                  \ l:active_buffer . ", " .
+                  \ "'" . line(".") . "', " .
+                  \ string(l:ns_prefixes) . ")"
+		 return l:current_snpath
+	  endf
+	  function! GetXPathForLine()
+         if !exists("b:ns_prefixes")
+            call XPathGuessPrefixes()
+         endif
+         let l:active_window = winnr()
+         let l:active_buffer = winbufnr(l:active_window)
+
+       	 let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
+         execute "py vim_adaptor.get_xpath(" .
+                  \ l:active_buffer . ", " .
+                  \ "'" . line(".") . "', " .
+                  \ string(l:ns_prefixes) . ")"
+	 endf
+
 
       function! XPathSetBufferPrefixes(ns_prefixes)
          if !exists("g:ns_prefixes")
