@@ -1,0 +1,47 @@
+*arxml.vim* Follow and Search Links in ARXML Documents
+
+==============================================================================
+CONTENTS					*arxml.vim-contents*
+
+==============================================================================
+INTRODUCTION					*arxml.vim*
+
+This plugin offers the possibility to jump to referenced elements referenced 
+by shortname. It also offers the possibility to search for elements,
+referencing the Element of the current line (or the first parent element with
+a shortname).
+
+It also offers folding for ARXML with the advantage of getting the shortname
+of the collapsed element.
+
+Additinally it lists the AR-PACKAGE elements shortnames in the collapsed
+AR-PACKAGES and the last part of the ShortName path if the collapsed element
+contains a reference (within the first two line).
+
+
+==============================================================================
+DEPENDENCIES					*arxml.vim-dependecies*
+
+The xpath functions depend on a python library called lxml. So you need a 
+version of vim which has python support. And you must have the python library lxml
+(http;//lxml.de) installed.
+
+
+==============================================================================
+CONFIGURATION					*arxml.vim-configuration*
+
+There is an option that is used to limit the number of lines scanned for the
+contained packages of an AR-PACKAGES element. Use it like this:
+
+    let g:arxml_vim_scanlines = 3000
+    (default: 10000)
+
+If loading a file takes a long time you should consider setting this value to
+a lower level.
+
+You can disable the function if your vim lacks of python support using these
+switches:
+
+    let g:skip_arxml_python = 1
+
+ vim:tw=78:ts=8:ft=help:norl:

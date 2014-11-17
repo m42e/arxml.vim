@@ -7,6 +7,9 @@ endif
 " Just load the stuff for xml
 runtime! ftplugin/xml.vim
 
+if defined('g:arxml_vim_scanlines')
+	let g:arxml_vim_scanlines = 10000
+endif
 
 if has("folding")
    function! ArxmlFoldText()
@@ -15,10 +18,12 @@ if has("folding")
       endif
 
       let foldtext = matchstr( getline( v:foldstart ), '\s*<[-A-Z]\+' )
-      if (foldtext =~ "\s*<AR-PACKAGES")
+      if (foldtext =~ "\s*<AR-PACKAGES" && g:arxml_vim_scanlines != 0)
+		 " Scan for AR-PACKAGE ShortNames
          let pkgs = ''
          let pkgs_append = ""
-         if (min([v:foldstart + 10000, v:foldend] ) < v:foldend )
+
+         if (min([v:foldstart +  g:arxml_vim_scanlines, v:foldend] ) < v:foldend )
             let pkgs_append = ", ...?"
          endif
          for line in split(join(getline( v:foldstart + 1, min([v:foldstart + 10000, v:foldend] ))),"\(\/AR-PACKAGE>\s*\|$\)")
@@ -36,11 +41,13 @@ if has("folding")
             let foldtext .= pkgs.pkgs_append
          endif
       else
+		 " Scan for the shortname of the current element
          let shortname = matchstr( join( getline( v:foldstart + 1, v:foldstart + 5 ) ), '^\s*<SHORT-NAME>\zs[-_A-Za-z0-9]\+\ze<\/SHORT-NAME>' )
          if( shortname != "" )
             let foldtext .= ' "' . shortname . '"'
          else
-            let reference = matchstr( join( getline(v:foldstart + 1, min([v:foldend, v:foldstart + 2]) ) ), '^\s*<.\{-}-REF .\{-}>.*\/\zs[-_A-Za-z0-9]\+\ze<', 0,1)
+			" If element has no shortname maybe we find a reference
+            let reference = matchstr( join( getline(v:foldstart + 1, min([v:foldend, v:foldstart + 2]) ) ), '^\s*<.\{-}-T\?REF .\{-}>.*\/\zs[-_A-Za-z0-9]\+\ze<', 0,1)
 
             if( reference != "" )
                let foldtext .=  ' REF:"' . reference . '"'
