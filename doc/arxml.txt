@@ -44,4 +44,20 @@ switches:
 
     let g:skip_arxml_python = 1
 
+If you do not specify a special xmllinter using the following command,
+   xmllint is ised by default
+
+    let g:xmllint_cmd = 'myxmlformatter'
+
+
+==============================================================================
+SPECIAL THANKS					*arxml.vim-thanks*
+
+*TuxTom* which supplied his vimfiles on github and gave me a strating point for
+this plugin
+
+*actionshrimp* for his vim-xpath plugin and the base for the functions I use
+here
+
+
  vim:tw=78:ts=8:ft=help:norl:
