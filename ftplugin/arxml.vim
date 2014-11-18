@@ -7,7 +7,7 @@ endif
 " Just load the stuff for xml
 runtime! ftplugin/xml.vim
 
-if defined('g:arxml_vim_scanlines')
+if exists('g:arxml_vim_scanlines')
 	let g:arxml_vim_scanlines = 10000
 endif
 
