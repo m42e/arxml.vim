@@ -4,7 +4,7 @@
 CONTENTS					*arxml.vim-contents*
 
 ==============================================================================
-INTRODUCTION					*arxml.vim*
+INTRODUCTION					*arxml*
 
 This plugin offers the possibility to jump to referenced elements referenced 
 by shortname. It also offers the possibility to search for elements,
