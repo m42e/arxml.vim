@@ -1,13 +1,13 @@
 
 if exists("b:did_ftplugin")
-   finish
+"   finish
 endif
 " Don't set 'b:did_ftplugin = 1' because that is xml.vim's responsability.
 
 " Just load the stuff for xml
 runtime! ftplugin/xml.vim
 
-if exists('g:arxml_vim_scanlines')
+if !exists('g:arxml_vim_scanlines')
 	let g:arxml_vim_scanlines = 10000
 endif
 
@@ -26,7 +26,7 @@ if has("folding")
          if (min([v:foldstart +  g:arxml_vim_scanlines, v:foldend] ) < v:foldend )
             let pkgs_append = ", ...?"
          endif
-         for line in split(join(getline( v:foldstart + 1, min([v:foldstart + 10000, v:foldend] ))),"\(\/AR-PACKAGE>\s*\|$\)")
+         for line in split(join(getline( v:foldstart + 1, min([v:foldstart + g:arxml_vim_scanlines, v:foldend] ))),"\(\/AR-PACKAGE>\s*\|$\)")
             let m = matchstr(line,  '<AR-PACKAGE.\{-}>\s*<SHORT-NAME>\zs[-_A-Za-z0-9]\+\ze<\/SHORT-NAME>')
             if(m != "")
                if(pkgs == '')
