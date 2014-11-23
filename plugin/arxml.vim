@@ -45,11 +45,17 @@ EOF
 	let s:curfiledir = fnamemodify(s:curfile, ":h")
 
 	let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
+	let s:followlast = 0
 
 	function! FollowShortName()
 		if ( "" == matchstr(getline("."), "-T\\?REF[ >]"))
-			echo "no reference in line following last yanked ShortName"
+			if ( s:followlast == 0)
+				echo "no reference in line hit again to follow last yanked ShortName"
+				let s:followlast = 0
+				return
+			endif
 		else
+			let s:followlast = 0
 			silent normal! "syit
 		endif
 		call FollowYankedShortName()
