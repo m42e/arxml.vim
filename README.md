@@ -1,5 +1,6 @@
 arxml.vim
 =========
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/m42e/arxml.vim?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Provides a more usefull folding for AUTOSAR XML files (arxml).
 It shows the shortname of the collapsed element in the foldtext, and shows the subpackages of ar-packages elements.
 And it allows to jump to the the linked reference using: ```call FollowShortName()```
