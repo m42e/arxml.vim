@@ -104,6 +104,7 @@ EOF
 	endf
 
 	function! FindShortNameReferences()
+	   -call setqflist([])
 		execute "g/".substitute(GetShortNamePathForLine(), "\\/", "\\\\/", "g")."</caddexpr expand(\"%\") . \":\" . line(\".\") .  \":\" . getline(\".\")"
 		execute "cw"
 	endf
