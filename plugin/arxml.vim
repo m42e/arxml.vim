@@ -68,7 +68,22 @@ EOF
 		let l:active_window = winnr()
 		let l:active_buffer = winbufnr(l:active_window)
 		let shortnamepath = @s
-		let xpath= substitute(shortnamepath, "\\/\\([^\\/]*\\)", "\\/\\/default:SHORT-NAME[text()=\"\\1\"]/..","g")
+      let elements = split(shortnamepath, "/")
+      let xpath = ''
+      for elem in elements
+         let xpath = xpath . "//default:SHORT-NAME[text()=\"".elem."\"]/.."
+      endfor
+      " To build a robuster XPATH we do not accept any ancestor that do not
+      " have a name thats part of the shortname
+      let xp2 = ''
+      for elem in elements[0:-2]
+         if xp2 != ''
+            let xp2 = xp2 . ' or '
+         endif
+         let xp2 = xp2 . "text()=\"".elem."\""
+      endfor
+      let xpath = xpath.'/self::node()[not(ancestor::*/default:SHORT-NAME[not('.xp2.')])]'
+      echom xpath
 
 		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
 		let xpath = escape(xpath, "'\\")
