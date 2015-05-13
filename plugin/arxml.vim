@@ -83,7 +83,6 @@ EOF
          let xp2 = xp2 . "text()=\"".elem."\""
       endfor
       let xpath = xpath.'/self::node()[not(ancestor::*/default:SHORT-NAME[not('.xp2.')])]'
-      echom xpath
 
 		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
 		let xpath = escape(xpath, "'\\")
