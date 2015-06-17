@@ -24,22 +24,30 @@ def get_buffer_string(bufnr):
     buffer = vim.buffers[bufnr + offset]
     return "\n".join(buffer)
 
-def evaluate_xpath(bufnr, xpath, ns_prefixes={}):
+def evaluate_xpath(bufnr, xpath, shortnamepath, ns_prefixes={}):
     xml = get_buffer_string(bufnr)
     filename = vim.eval('expand(\'%\')')
 
     try:
         results = x.evaluate(xml, xpath, filename, ns_prefixes)
         cwd = vim.eval("getcwd()")
-        files = [os.path.join(dp, f) for dp, dn, fn in os.walk(cwd) for f in fn if f.endswith('arxml')]
+        # find all arxml files within the current working directory
+        files = [os.path.join(dp, f) for dp, dn, fn in os.walk(cwd) for f in fn if f.endswith('arxml') and not os.path.join(dp,f).endswith(filename)]
         for file in files:
            results = results + x.evaluate_file(file, xpath, ns_prefixes)
+        # perform the jump if it is within the file and only one match
         if len(results) == 1 and results[0]["filename"] == filename:
             if results[0]["line_number"] is not None:
                 vim.command("normal! {0}gg".format(results[0]["line_number"]))
-        elif len(results) > 0:
+        if len(results) == 1:
+            if results[0]["line_number"] is not None:
+                vim.command("e {0}".format(results[0]["filename"]))
+                vim.command("normal! {0}gg".format(results[0]["line_number"]))
+        elif len(results) > 1:
+            vim.command("caddexpr \"result for {0}\"".format(shortnamepath))
             for result in results:
-               vim.command("caddexpr \"{0}:{1}:xpath\"".format(result["filename"],result["line_number"]))
+               vim.command("caddexpr \"{0}:{1}: possible match\"".format(result["filename"],result["line_number"]))
+            vim.command("cw")
         elif len(results) < 1:
             vim.command("echo \"ShortName path not found in file and working directory arxml files\"")
     except Exception as e:

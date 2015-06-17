@@ -90,8 +90,8 @@ EOF
 		execute "py vim_adaptor.evaluate_xpath(" .
 					\ l:active_buffer . ", " .
 					\ "'" . l:xpath . "', " .
+					\ "'" . l:shortnamepath . "', " .
 					\ string(l:ns_prefixes) . ")"
-		execute "cw"
 	endf
 
 	function! XPathGuessPrefixes()
