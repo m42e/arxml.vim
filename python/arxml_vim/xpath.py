@@ -4,9 +4,9 @@ from lxml import etree
 
 LIBXML2_MAX_LINE = 65534
 
-def evaluate(xml, xpath, namespaces=dict()):
+def evaluate(xml, xpath, filename='', namespaces=dict()):
     try:
-        results = _evaluate(xml, xpath, namespaces)
+        results = _evaluate(xml, xpath, filename, namespaces)
         return results
     except Exception as e:
         if isinstance(e, XmlBaseError):
@@ -14,7 +14,19 @@ def evaluate(xml, xpath, namespaces=dict()):
         else:
             raise
 
-def _evaluate(xml, xpath, namespaces=dict(), compiled_xpath=None):
+def evaluate_file(filename, xpath, namespaces=dict()):
+    with open(filename, 'r') as content_file:
+        xml = content_file.read()
+    try:
+        results = _evaluate(xml, xpath, filename, namespaces)
+        return results
+    except Exception as e:
+        if isinstance(e, XmlBaseError):
+            raise
+        else:
+            raise
+
+def _evaluate(xml, xpath, filename='', namespaces=dict(), compiled_xpath=None):
     """Evaluate an xpath against some xml. 
     Reports line numbers correctly on xml with over 65534 lines"""
 
@@ -39,6 +51,7 @@ def _evaluate(xml, xpath, namespaces=dict(), compiled_xpath=None):
 
     for match in tree_matches:
         output_match = _tree_match_to_output_match(match, namespaces)
+        output_match["filename"] = filename
 
         if (output_match["line_number"] is None) or \
                 output_match["line_number"] <= LIBXML2_MAX_LINE:

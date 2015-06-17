@@ -51,7 +51,7 @@ EOF
 		if ( "" == matchstr(getline("."), "-T\\?REF[ >]"))
 			if ( s:followlast == 0)
 				echo "no reference in line hit again to follow last yanked ShortName"
-				let s:followlast = 0
+				let s:followlast = 1
 				return
 			endif
 		else
@@ -86,10 +86,12 @@ EOF
 
 		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
 		let xpath = escape(xpath, "'\\")
+	   -call setqflist([])
 		execute "py vim_adaptor.evaluate_xpath(" .
 					\ l:active_buffer . ", " .
 					\ "'" . l:xpath . "', " .
 					\ string(l:ns_prefixes) . ")"
+		execute "cw"
 	endf
 
 	function! XPathGuessPrefixes()

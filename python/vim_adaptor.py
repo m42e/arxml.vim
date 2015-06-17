@@ -5,6 +5,7 @@ except ImportError:
     vim = None
 
 import pprint
+import os
 from arxml_vim import xpath as x
 from arxml_vim import namespace_prefix_guesser as g
 from lxml import etree
@@ -25,18 +26,24 @@ def get_buffer_string(bufnr):
 
 def evaluate_xpath(bufnr, xpath, ns_prefixes={}):
     xml = get_buffer_string(bufnr)
+    filename = vim.eval('expand(\'%\')')
 
     try:
-        results = x.evaluate(xml, xpath, ns_prefixes)
-        if len(results) > 1:
-            vim.command("echo \"ShortName not unique\"")
-        elif len(results) < 1:
-            vim.command("echo \"ShortName path not found in file\"")
-        else:
+        results = x.evaluate(xml, xpath, filename, ns_prefixes)
+        cwd = vim.eval("getcwd()")
+        files = [os.path.join(dp, f) for dp, dn, fn in os.walk(cwd) for f in fn if f.endswith('arxml')]
+        for file in files:
+           results = results + x.evaluate_file(file, xpath, ns_prefixes)
+        if len(results) == 1 and results[0]["filename"] == filename:
             if results[0]["line_number"] is not None:
                 vim.command("normal! {0}gg".format(results[0]["line_number"]))
+        elif len(results) > 0:
+            for result in results:
+               vim.command("caddexpr \"{0}:{1}:xpath\"".format(result["filename"],result["line_number"]))
+        elif len(results) < 1:
+            vim.command("echo \"ShortName path not found in file and working directory arxml files\"")
     except Exception as e:
-        vim.command("echo \"XPath error{0}\"".format(e.msg))
+        vim.command("echo \"XPath error {0}\"".format(e))
         print (e.message)
 
 def guess_prefixes(bufnr):
@@ -73,7 +80,6 @@ def get_shortnamepath(bufnr, linenr, ns_prefixes={}):
                 element = element.getparent()
             break
     command = 'let l:current_snpath = \"{0}\"'.format(shortnamepath)
-    print command
     vim.command(command)
 
 def get_xpath(bufnr, linenr, ns_prefixes={}):
