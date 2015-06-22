@@ -58,7 +58,7 @@ EOF
 			let s:followlast = 0
 			silent normal! "syit
 		endif
-		call FollowYankedShortName()
+      call FollowYankedShortName()
 	endf
 
 	function! FollowYankedShortName()
@@ -86,7 +86,7 @@ EOF
 
 		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
 		let xpath = escape(xpath, "'\\")
-	   -call setqflist([])
+	   call setqflist([])
 		execute "py vim_adaptor.evaluate_xpath(" .
 					\ l:active_buffer . ", " .
 					\ "'" . l:xpath . "', " .

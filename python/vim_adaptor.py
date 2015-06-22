@@ -39,10 +39,11 @@ def evaluate_xpath(bufnr, xpath, shortnamepath, ns_prefixes={}):
         if len(results) == 1 and results[0]["filename"] == filename:
             if results[0]["line_number"] is not None:
                 vim.command("normal! {0}gg".format(results[0]["line_number"]))
-        if len(results) == 1:
+        elif len(results) == 1:
             if results[0]["line_number"] is not None:
                 vim.command("e {0}".format(results[0]["filename"]))
                 vim.command("normal! {0}gg".format(results[0]["line_number"]))
+                vim.command("echo \"{0} {1}\"".format(results[0]["filename"], filename))
         elif len(results) > 1:
             vim.command("caddexpr \"result for {0}\"".format(shortnamepath))
             for result in results:
