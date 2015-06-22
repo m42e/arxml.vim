@@ -106,9 +106,16 @@ EOF
 	endf
 
 	function! FindShortNameReferences()
-	   -call setqflist([])
-		execute "g/".substitute(GetShortNamePathForLine(), "\\/", "\\\\/", "g")."</caddexpr expand(\"%\") . \":\" . line(\".\") .  \":\" . getline(\".\")"
-		execute "cw"
+		let l:active_window = winnr()
+		let l:active_buffer = winbufnr(l:active_window)
+      let b:references = []
+      execute "g/".substitute(GetShortNamePathForLine(), "\\/", "\\\\/", "g")."/call add(b:references, {\"bufnr\": ".l:active_buffer.", \"lnum\": line(\".\"), \"text\": getline(\".\")})"
+      if len(b:references) > 1
+         call setqflist(b:references)
+         execute "cw"
+      else
+         execute "ccl"
+      endif
 	endf
 
 	function! GetShortNamePathForLine()
