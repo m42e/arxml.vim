@@ -12,6 +12,8 @@ from lxml import etree
 
 VARIABLE_SCOPE = "s:"
 
+cwdfiles = []
+
 def get_buffer_string(bufnr):
     offset = -1
 
@@ -24,17 +26,24 @@ def get_buffer_string(bufnr):
     buffer = vim.buffers[bufnr + offset]
     return "\n".join(buffer)
 
-def evaluate_xpath(bufnr, xpath, shortnamepath, ns_prefixes={}):
+def evaluate_xpath(bufnr, xpath, shortnamepath, allfiles=True, ns_prefixes={}):
+    global cwdfiles
     xml = get_buffer_string(bufnr)
     filename = vim.eval('expand(\'%\')')
 
     try:
         results = x.evaluate(xml, xpath, filename, ns_prefixes)
-        cwd = vim.eval("getcwd()")
-        # find all arxml files within the current working directory
-        files = [os.path.join(dp, f) for dp, dn, fn in os.walk(cwd) for f in fn if f.endswith('arxml') and not os.path.join(dp,f).endswith(filename)]
-        for file in files:
-           results = results + x.evaluate_file(file, xpath, ns_prefixes)
+        if allfiles:
+           cwd = vim.eval("getcwd()")
+           # find all arxml files within the current working directory
+           if(cwdfiles == []):
+              cwdfiles = [os.path.join(dp, f) for dp, dn, fn in os.walk(cwd) for f in fn if f.endswith('arxml') and not os.path.join(dp,f).endswith(filename)]
+           files = cwdfiles
+           for file in files:
+              try:
+                 results = results + x.evaluate_file(file, xpath, ns_prefixes)
+              except:
+                 continue
         # perform the jump if it is within the file and only one match
         if len(results) == 1 and results[0]["filename"] == filename:
             if results[0]["line_number"] is not None:
@@ -54,7 +63,7 @@ def evaluate_xpath(bufnr, xpath, shortnamepath, ns_prefixes={}):
         elif len(results) < 1:
             vim.command("echo \"ShortName path not found in file and working directory arxml files\"")
     except Exception as e:
-        vim.command("echo \"XPath error {0}\"".format(e))
+        vim.command("echo \"XPath error {0}\"".format(e.msg))
         print (e.message)
 
 def guess_prefixes(bufnr):

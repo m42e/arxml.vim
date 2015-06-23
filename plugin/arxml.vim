@@ -3,6 +3,12 @@ if exists("g:skip_arxml")
 	finish
 endif
 
+if (! exists("g:search_all_files_in_cwd") || g:search_all_files_in_cwd == 0)
+   let g:py_search_in_cwd = 'False'
+else
+   let g:py_search_in_cwd = 'True'
+endif
+
 if (! exists("g:skip_arxml_python"))
 	"Check python is installed
 	if !has("python")
@@ -24,7 +30,7 @@ if (! exists("g:skip_arxml_python"))
 	py import sys
 	execute "py sys.argv = ['" . s:pyfile . "']"
 	execute "pyfile " . s:pyfile
-
+   " This is a check to validate that lxml is available
 py <<EOF
 import vim
 try:
@@ -40,14 +46,18 @@ EOF
 					\ . '"let g:skip_arxml_python = 1" to your vimrc.'
 		finish
 	endif
-	"Load the vim adaptor python script
-	let s:curfile = expand("<sfile>")
-	let s:curfiledir = fnamemodify(s:curfile, ":h")
 
-	let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
 	let s:followlast = 0
 
-	function! FollowShortName()
+	function! FollowShortName(...)
+      let allfiles = g:py_search_in_cwd
+      if a:0 > 0 
+         if a:1 == 0
+            let allfiles = 'False'
+         else
+            let allfiles = 'True'
+         endif
+      endif
 		if ( "" == matchstr(getline("."), "-T\\?REF[ >]"))
 			if ( s:followlast == 0)
 				echo "no reference in line hit again to follow last yanked ShortName"
@@ -58,10 +68,10 @@ EOF
 			let s:followlast = 0
 			silent normal! "syit
 		endif
-      call FollowYankedShortName()
+      call FollowYankedShortName(allfiles)
 	endf
 
-	function! FollowYankedShortName()
+	function! FollowYankedShortName(allfiles)
 		if !exists("b:ns_prefixes")
 			call XPathGuessPrefixes()
 		endif
@@ -91,6 +101,7 @@ EOF
 					\ l:active_buffer . ", " .
 					\ "'" . l:xpath . "', " .
 					\ "'" . l:shortnamepath . "', " .
+					\ "'" . a:allfiles . "', " .
 					\ string(l:ns_prefixes) . ")"
 	endf
 
