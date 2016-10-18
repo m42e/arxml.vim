@@ -11,7 +11,13 @@ endif
 
 if (! exists("g:skip_arxml_python"))
 	"Check python is installed
-	if !has("python")
+  if has('python3')
+    let g:arxml_vim_python = 'py3'
+  endif
+  if has('python')
+    let g:arxml_vim_python = 'py'
+  endif
+	if ! exists("g:arxml_vim_python")
 		echo 'arxml.vim requires vim to be compiled with python support, and '
 					\ . 'python to be installed for several features. To stop this message from '
 					\ . 'appearing, either install python, uninstall this plugin '
@@ -27,18 +33,18 @@ if (! exists("g:skip_arxml_python"))
 	let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
 	let s:xpath_search_history = []
 
-	py import sys
-	execute "py sys.argv = ['" . s:pyfile . "']"
-	execute "pyfile " . s:pyfile
+	execute g:arxml_vim_python ." import sys"
+	execute g:arxml_vim_python ." sys.argv = ['" . s:pyfile . "']"
+	execute g:arxml_vim_python ."file " . s:pyfile
    " This is a check to validate that lxml is available
-py <<EOF
-import vim
-try:
-	import lxml
-except ImportError:
-	vim.command('let s:no_lxml = 1')
-EOF
+  let s:checklxml = "
+    \import vim\n
+    \try:\n
+    \  import lxml\n
+    \except ImportError:\n
+    \  vim.command('let s:no_lxml = 1')"
 
+  execute g:arxml_vim_python ." ".s:checklxml 
 	if s:no_lxml
 		echo 'arxml.vim requires the lxml python library (http://lxml.de) to be '
 					\ . 'installed. To stop this message from appearing, either '
