@@ -40,7 +40,9 @@ def _evaluate(xml, xpath, filename='', namespaces=dict(), compiled_xpath=None):
     global compiledxpaths
 
     try:
-        tree = etree.fromstring(xml)
+        utf8_parser = etree.XMLParser(encoding='utf-8')
+        s = xml.encode('utf-8')
+        tree =  etree.fromstring(s, parser=utf8_parser)
     except Exception as e:
         raise from_lxml_parse_exception(e, filename)
 
@@ -51,6 +53,7 @@ def _evaluate(xml, xpath, filename='', namespaces=dict(), compiled_xpath=None):
             else:
                compiled_xpath = etree.XPath(xpath, namespaces=namespaces)
 
+        print(xpath)
         tree_matches = compiled_xpath(tree)
     except Exception as e:
         raise from_lxml_xpath_exception(e)

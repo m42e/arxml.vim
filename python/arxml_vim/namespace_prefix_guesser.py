@@ -21,7 +21,9 @@ def _guess_prefixes(xml):
 
     prefixes = {}
 
-    tree = etree.fromstring(xml)
+    utf8_parser = etree.XMLParser(encoding='utf-8')
+    s = xml.encode('utf-8')
+    tree =  etree.fromstring(s, parser=utf8_parser)
 
     for el in tree.iter():
         node_prefixes = el.nsmap
