@@ -103,7 +103,7 @@ if (! exists("g:skip_arxml_python"))
 		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
 		let xpath = escape(xpath, "'\\")
 	   call setqflist([])
-		execute "py vim_adaptor.evaluate_xpath(" .
+		execute g:arxml_vim_python . " vim_adaptor.evaluate_xpath(" .
 					\ l:active_buffer . ", " .
 					\ "'" . l:xpath . "', " .
 					\ "'" . l:shortnamepath . "', " .
@@ -116,9 +116,10 @@ if (! exists("g:skip_arxml_python"))
 		let l:active_buffer = winbufnr(l:active_window)
 
 		try
-			execute "py vim_adaptor.guess_prefixes(" . l:active_buffer . ")"
+			execute g:arxml_vim_python . " vim_adaptor.guess_prefixes(" . l:active_buffer . ")"
 			call XPathSetBufferPrefixes(l:ns_prefixes)
 		catch
+      errmsg "Cannot gues namespaces"
 		endtry
 	endf
 
@@ -143,7 +144,7 @@ if (! exists("g:skip_arxml_python"))
 		let l:active_buffer = winbufnr(l:active_window)
 
 		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
-		execute "py vim_adaptor.get_shortnamepath(" .
+		execute g:arxml_vim_python . " vim_adaptor.get_shortnamepath(" .
 					\ l:active_buffer . ", " .
 					\ "'" . line(".") . "', " .
 					\ string(l:ns_prefixes) . ")"
@@ -158,7 +159,7 @@ if (! exists("g:skip_arxml_python"))
 		let l:active_buffer = winbufnr(l:active_window)
 
 		let l:ns_prefixes = getbufvar(l:active_buffer, "ns_prefixes")
-		execute "py vim_adaptor.get_xpath(" .
+		execute g:arxml_vim_python . " vim_adaptor.get_xpath(" .
 					\ l:active_buffer . ", " .
 					\ "'" . line(".") . "', " .
 					\ string(l:ns_prefixes) . ")"
