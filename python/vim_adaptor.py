@@ -78,13 +78,15 @@ def guess_prefixes(bufnr):
         outstr += "}"
 
         vim.command(outstr)
-    except Exception as e:
+    except ArxmlError as e:
         vim.command('throw "{0}"'.format(e.msg))
+    except Exception as e:
+        vim.command('throw "{0}"'.format(e))
 
 def get_shortnamepath(bufnr, linenr, ns_prefixes={}):
     xml = get_buffer_string(bufnr)
     try:
-        tree = etree.fromstring(xml)
+        tree = etree.fromstring(xml.encode('utf-8'))
     except Exception as e:
         raise
     shortnamepath = ""
@@ -105,7 +107,7 @@ def get_shortnamepath(bufnr, linenr, ns_prefixes={}):
 def get_xpath(bufnr, linenr, ns_prefixes={}):
     xml = get_buffer_string(bufnr)
     try:
-        tree = etree.fromstring(xml)
+        tree = etree.fromstring(xml.encode('utf-8'))
     except Exception as e:
         raise
     xpath = ""

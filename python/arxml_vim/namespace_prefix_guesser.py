@@ -8,7 +8,8 @@ class PrefixGuessingError(Exception):
 
 def guess_prefixes(xml):
     try:
-        return _guess_prefixes(xml)
+        a =  _guess_prefixes(xml)
+        return a
     except Exception as e:
         wrapped = PrefixGuessingError(e)
         raise wrapped
@@ -24,6 +25,7 @@ def _guess_prefixes(xml):
     utf8_parser = etree.XMLParser(encoding='utf-8')
     s = xml.encode('utf-8')
     tree =  etree.fromstring(s, parser=utf8_parser)
+
 
     for el in tree.iter():
         node_prefixes = el.nsmap

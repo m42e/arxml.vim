@@ -25,39 +25,44 @@ def from_lxml_xpath_exception(e):
 
     return out
 
-class UnknownError(Exception):
+class ArxmlError(Exception):
+    pass
+
+class UnknownError(ArxmlError):
     def __init__(self, e):
+        self.super().__init__()
         self.inner = e
         self.msg = "An unknown error occurred: " + e.args[0]
 
-class XmlBaseError(Exception):
+class XmlBaseError(ArxmlError):
     def __init__(self, e):
+        self.super().__init__()
         self.inner = e
         self.msg = e.args[0]
 
 class BufferXmlError(XmlBaseError):
     def __init__(self, e, filename):
-        self.inner = e
+        self.super().__init__(e)
         self.msg = "Error parsing XML in " + filename + ": " + wrap_error_message(e.args[0])
 
 class XPathError(XmlBaseError):
     def __init__(self, e):
-        self.inner = e
+        self.super().__init__(e)
         self.msg = "XPath error: " + wrap_error_message(e.args[0])
 
 class XPathSyntaxError(XPathError):
     def __init__(self, e):
-        self.inner = e
+        self.super().__init__(e)
         self.msg = "XPath syntax error: " + wrap_error_message(e.args[0])
 
 class XPathEvaluationError(XPathError):
     def __init__(self, e):
-        self.inner = e
+        self.super().__init__(e)
         self.msg = "XPath evaluation error: " + wrap_error_message(e.args[0])
 
 class XPathNamespaceUndefinedError(XPathEvaluationError):
     def __init__(self, e):
-        self.inner = e
+        self.super().__init__(e)
         self.msg = "XPath evaluation error: undefined namespace prefix"
 
 def wrap_error_message(msg):

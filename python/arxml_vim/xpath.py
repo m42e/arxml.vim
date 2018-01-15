@@ -34,7 +34,7 @@ def evaluate_file(filename, xpath, namespaces=dict()):
             raise
 
 def _evaluate(xml, xpath, filename='', namespaces=dict(), compiled_xpath=None):
-    """Evaluate an xpath against some xml. 
+    """Evaluate an xpath against some xml.
     Reports line numbers correctly on xml with over 65534 lines"""
 
     global compiledxpaths
@@ -53,7 +53,6 @@ def _evaluate(xml, xpath, filename='', namespaces=dict(), compiled_xpath=None):
             else:
                compiled_xpath = etree.XPath(xpath, namespaces=namespaces)
 
-        print(xpath)
         tree_matches = compiled_xpath(tree)
     except Exception as e:
         raise from_lxml_xpath_exception(e)
@@ -74,7 +73,7 @@ def _evaluate(xml, xpath, filename='', namespaces=dict(), compiled_xpath=None):
             #actually reports correctly
             matches.append(output_match)
         else:
-            #If there are any higher range matches, 
+            #If there are any higher range matches,
             #we will have to 'compress lines'
             line_compress_required = True
             break;
